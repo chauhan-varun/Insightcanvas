@@ -9,6 +9,21 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from ai import generate_insights, chat_with_data
+from data_cleaner import (
+    get_data_quality_report, 
+    calculate_data_quality_score,
+    clean_data,
+    get_cleaning_comparison
+)
+from advanced_eda import (
+    create_correlation_heatmap,
+    create_distribution_plots,
+    create_box_plots_grid,
+    create_pairplot_image,
+    create_violin_plots,
+    create_scatter_matrix,
+    create_kde_plots
+)
 
 
 st.set_page_config(
@@ -68,8 +83,10 @@ def main():
         st.info(
             "This dashboard allows you to:\n"
             "- Upload CSV files\n"
-            "- Preview and explore data\n"
+            "- Check data quality & get reports\n"
+            "- Clean your data automatically\n"
             "- Create interactive visualizations\n"
+            "- Advanced EDA with correlations\n"
             "- Get AI-powered insights\n"
             "- Chat with your data"
         )
@@ -82,7 +99,15 @@ def main():
             
             st.success(f"✅ File uploaded successfully! Loaded {len(df)} rows and {len(df.columns)} columns.")
             
-            tab1, tab2, tab3, tab4 = st.tabs(["📋 Data Preview", "📈 Visualizations", "🤖 AI Insights", "💬 Chat with Data"])
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+                "📋 Data Preview", 
+                "📊 Data Quality Report",
+                "🧹 Data Cleaning",
+                "📈 Visualizations", 
+                "🔬 Advanced EDA",
+                "🤖 AI Insights", 
+                "💬 Chat with Data"
+            ])
             
             with tab1:
                 st.header("Data Preview")
