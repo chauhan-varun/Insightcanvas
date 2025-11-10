@@ -3,5 +3,9 @@ pandas
 plotly
 groq
 python-dotenv
+numpy
+seaborn
+scipy
+matplotlib
 
 
