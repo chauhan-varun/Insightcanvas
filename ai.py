@@ -45,21 +45,51 @@ def dataframe_to_summary(df):
     summary += f"- Column names: {', '.join(df.columns.tolist())}\n\n"
     
     summary += "Column Statistics:\n"
+    categorical_cols = []
+    numeric_cols = []
+    
     for col in df.columns:
         summary += f"\n{col}:\n"
         if pd.api.types.is_numeric_dtype(df[col]):
+            numeric_cols.append(col)
             summary += f"  - Type: Numeric\n"
             summary += f"  - Min: {df[col].min()}\n"
             summary += f"  - Max: {df[col].max()}\n"
             summary += f"  - Mean: {df[col].mean():.2f}\n"
             summary += f"  - Median: {df[col].median():.2f}\n"
         else:
+            categorical_cols.append(col)
             summary += f"  - Type: {df[col].dtype}\n"
             summary += f"  - Unique values: {df[col].nunique()}\n"
-            if df[col].nunique() <= 10:
-                summary += f"  - Values: {', '.join(map(str, df[col].unique().tolist()))}\n"
+            if df[col].nunique() <= 30:
+                summary += f"  - Values: {', '.join(map(str, df[col].unique().tolist()[:30]))}\n"
     
-    summary += f"\nFirst few rows:\n{df.head(3).to_string()}\n"
+    # Add aggregated data for better insights
+    summary += "\n" + "="*50 + "\n"
+    summary += "AGGREGATED DATA FOR ANALYSIS:\n"
+    summary += "="*50 + "\n"
+    
+    # For each categorical column, show aggregated numeric data
+    for cat_col in categorical_cols[:3]:  # Limit to first 3 categorical columns
+        if df[cat_col].nunique() <= 50:  # Only for columns with reasonable unique values
+            for num_col in numeric_cols[:3]:  # Limit to first 3 numeric columns
+                try:
+                    agg_data = df.groupby(cat_col)[num_col].agg(['sum', 'mean', 'count']).round(2)
+                    summary += f"\n{num_col} by {cat_col}:\n"
+                    summary += agg_data.to_string() + "\n"
+                except:
+                    pass
+    
+    # Add sample rows
+    summary += f"\n{'='*50}\n"
+    summary += f"SAMPLE DATA (first 10 rows):\n"
+    summary += f"{'='*50}\n"
+    summary += df.head(10).to_string() + "\n"
+    
+    # Add sample of last rows too
+    if len(df) > 10:
+        summary += f"\nLast 5 rows:\n"
+        summary += df.tail(5).to_string() + "\n"
     
     return summary
 
