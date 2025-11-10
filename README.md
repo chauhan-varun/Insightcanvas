@@ -6,6 +6,20 @@ An interactive web application built with Streamlit that allows users to upload 
 
 - **CSV File Upload**: Easy drag-and-drop or file selection interface
 - **Data Preview**: View and explore your data with summary statistics
+- **📊 Data Quality Report**: Comprehensive analysis including:
+  - Overall data quality score (0-100)
+  - Completeness, uniqueness, consistency, and outlier metrics
+  - Missing values detection and analysis
+  - Duplicate rows identification
+  - Column-level quality metrics
+  - Actionable recommendations
+- **🧹 Data Cleaning**: Automated data cleaning with:
+  - Handle missing values (drop, fill with mean/median/mode)
+  - Remove duplicate rows
+  - Detect and handle outliers (IQR or Z-score methods)
+  - Auto-convert data types
+  - Before vs After comparison
+  - Data quality score improvement tracking
 - **Interactive Visualizations**: Create various chart types including:
   - Line Charts
   - Bar Charts
@@ -13,6 +27,14 @@ An interactive web application built with Streamlit that allows users to upload 
   - Histograms
   - Box Plots
   - Pie Charts
+- **🔬 Advanced EDA (Exploratory Data Analysis)**:
+  - Correlation heatmap with top correlations
+  - Distribution plots for all numeric features
+  - Box plots grid for outlier detection
+  - Violin plots for distribution + density
+  - Pairplot for feature relationships
+  - Interactive scatter matrix
+  - Kernel Density Estimation (KDE) plots
 - **AI-Powered Insights**: Generate intelligent analysis of your data using Groq's LLaMA 3.3 model
 - **Chat with Your Data**: Ask questions about your dataset and get AI-powered answers
 - **Modern UI**: Clean, intuitive interface with responsive design
@@ -23,6 +45,8 @@ An interactive web application built with Streamlit that allows users to upload 
 - **Streamlit**: Web application framework
 - **Pandas**: Data manipulation and analysis
 - **Plotly**: Interactive visualization library
+- **Seaborn & Matplotlib**: Advanced statistical visualizations
+- **NumPy & SciPy**: Numerical computing and statistical analysis
 - **Groq API**: AI reasoning with LLaMA 3.3-70b-versatile model
 
 ## 📋 Prerequisites
@@ -95,6 +119,8 @@ An interactive web application built with Streamlit that allows users to upload 
 /project
 ├── app.py              # Main Streamlit application
 ├── ai.py               # Groq API integration and helper functions
+├── data_cleaner.py     # Data cleaning and quality assessment
+├── advanced_eda.py     # Advanced exploratory data analysis functions
 ├── requirements.txt    # Python dependencies
 └── README.md          # Project documentation
 ```
@@ -109,11 +135,12 @@ An interactive web application built with Streamlit that allows users to upload 
 
 ## 📊 Example Use Cases
 
-- **Sales Analysis**: Upload sales data to identify trends and patterns
-- **Customer Insights**: Analyze customer behavior and demographics
-- **Financial Data**: Visualize financial metrics and get AI recommendations
-- **Scientific Research**: Explore experimental data and statistical relationships
-- **Business Intelligence**: Transform raw data into actionable insights
+- **Sales Analysis**: Upload sales data, clean outliers, identify trends and correlations
+- **Customer Insights**: Check data quality, analyze customer behavior and demographics
+- **Financial Data**: Clean missing values, visualize financial metrics with correlation analysis
+- **Scientific Research**: Detect outliers, explore experimental data and statistical relationships
+- **Business Intelligence**: Assess data quality, clean datasets, and transform raw data into actionable insights
+- **Data Preparation**: Clean and prepare datasets before feeding to ML models
 
 ## 🎨 Visualization Types
 
@@ -206,6 +233,14 @@ For issues or questions:
 
 ## 🔄 Version History
 
+- **v2.0.0** - Major update with data quality and advanced EDA
+  - Data Quality Report with comprehensive metrics
+  - Automated Data Cleaning functionality
+  - Advanced EDA with correlation heatmaps, pairplots, and more
+  - Before vs After cleaning comparison
+  - Quality score tracking
+  - Outlier detection and handling
+  
 - **v1.0.0** - Initial release with core features
   - CSV upload and preview
   - Multiple visualization types

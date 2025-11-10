@@ -67,32 +67,27 @@ def calculate_data_quality_score(df):
     """
     scores = {}
     
-    # Completeness score (no missing values = 100)
     total_cells = df.shape[0] * df.shape[1]
     missing_cells = df.isnull().sum().sum()
     completeness = ((total_cells - missing_cells) / total_cells * 100) if total_cells > 0 else 0
     scores['completeness'] = completeness
     
-    # Uniqueness score (no duplicates = 100)
     duplicate_rows = df.duplicated().sum()
     uniqueness = ((len(df) - duplicate_rows) / len(df) * 100) if len(df) > 0 else 0
     scores['uniqueness'] = uniqueness
     
-    # Consistency score (proper data types)
     consistency_issues = 0
     for col in df.columns:
         if df[col].dtype == 'object':
-            # Check for mixed types in object columns
             try:
                 pd.to_numeric(df[col].dropna())
-                consistency_issues += 1  # Could be numeric
+                consistency_issues += 1
             except:
                 pass
     
     consistency = ((len(df.columns) - consistency_issues) / len(df.columns) * 100) if len(df.columns) > 0 else 0
     scores['consistency'] = consistency
     
-    # Outlier score (fewer outliers = better)
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     if len(numeric_cols) > 0:
         total_outliers = 0
@@ -106,7 +101,6 @@ def calculate_data_quality_score(df):
     else:
         scores['outliers'] = 100
     
-    # Overall score (weighted average)
     overall_score = (
         scores['completeness'] * 0.35 +
         scores['uniqueness'] * 0.25 +
@@ -131,25 +125,20 @@ def get_data_quality_report(df):
     """
     report = {}
     
-    # Basic info
     report['total_rows'] = len(df)
     report['total_columns'] = len(df.columns)
     report['total_cells'] = len(df) * len(df.columns)
     
-    # Missing values
     report['missing_values'] = df.isnull().sum().sum()
     report['missing_percentage'] = (report['missing_values'] / report['total_cells'] * 100) if report['total_cells'] > 0 else 0
     
-    # Duplicates
     report['duplicate_rows'] = df.duplicated().sum()
     report['duplicate_percentage'] = (report['duplicate_rows'] / len(df) * 100) if len(df) > 0 else 0
     
-    # Data types
     report['numeric_columns'] = len(df.select_dtypes(include=[np.number]).columns)
     report['categorical_columns'] = len(df.select_dtypes(include=['object', 'category']).columns)
     report['datetime_columns'] = len(df.select_dtypes(include=['datetime']).columns)
     
-    # Column-level details
     column_details = []
     for col in df.columns:
         col_info = {
@@ -188,7 +177,6 @@ def clean_data(df, options):
     df_cleaned = df.copy()
     cleaning_log = []
     
-    # Handle missing values
     if options.get('handle_missing'):
         missing_strategy = options.get('missing_strategy', 'drop')
         
@@ -227,14 +215,12 @@ def clean_data(df, options):
                         df_cleaned[col].fillna(mode_val[0], inplace=True)
             cleaning_log.append(f"Filled missing values with mode")
     
-    # Remove duplicates
     if options.get('remove_duplicates'):
         before_rows = len(df_cleaned)
         df_cleaned = df_cleaned.drop_duplicates()
         removed = before_rows - len(df_cleaned)
         cleaning_log.append(f"Removed {removed} duplicate rows")
     
-    # Handle outliers
     if options.get('handle_outliers'):
         outlier_method = options.get('outlier_method', 'iqr')
         outlier_strategy = options.get('outlier_strategy', 'remove')
@@ -266,16 +252,13 @@ def clean_data(df, options):
         else:
             cleaning_log.append(f"Capped {total_outliers} outliers using {outlier_method.upper()} method")
     
-    # Convert data types
     if options.get('convert_types'):
         for col in df_cleaned.columns:
             if df_cleaned[col].dtype == 'object':
-                # Try to convert to numeric
                 try:
                     df_cleaned[col] = pd.to_numeric(df_cleaned[col])
                     cleaning_log.append(f"Converted '{col}' to numeric type")
                 except:
-                    # Try to convert to datetime
                     try:
                         df_cleaned[col] = pd.to_datetime(df_cleaned[col])
                         cleaning_log.append(f"Converted '{col}' to datetime type")

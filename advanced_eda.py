@@ -76,11 +76,10 @@ def create_distribution_plots(df, columns=None, max_cols=6):
     if not numeric_cols:
         return None
     
-    # Limit to max_cols
     numeric_cols = numeric_cols[:max_cols]
     
     n_cols = len(numeric_cols)
-    n_rows = (n_cols + 2) // 3  # 3 columns per row
+    n_rows = (n_cols + 2) // 3
     
     fig = make_subplots(
         rows=n_rows, 
@@ -175,19 +174,15 @@ def create_pairplot_image(df, columns=None, max_cols=5):
     if not numeric_cols or len(numeric_cols) < 2:
         return None
     
-    # Limit columns for performance
     numeric_cols = numeric_cols[:max_cols]
     
-    # Sample data if too large
     sample_df = df[numeric_cols].sample(n=min(1000, len(df)))
     
-    # Create pairplot
     plt.figure(figsize=(12, 10))
     sns.set_style("whitegrid")
     pairplot = sns.pairplot(sample_df, diag_kind='hist', plot_kws={'alpha': 0.6})
     pairplot.fig.suptitle('Pairplot - Relationship Between Features', y=1.01)
     
-    # Save to bytes
     buf = io.BytesIO()
     plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
     buf.seek(0)
@@ -261,7 +256,6 @@ def create_scatter_matrix(df, columns=None, max_cols=5):
     
     numeric_cols = numeric_cols[:max_cols]
     
-    # Sample if too large
     sample_df = df[numeric_cols].sample(n=min(1000, len(df)))
     
     fig = px.scatter_matrix(
@@ -325,7 +319,6 @@ def create_qq_plots(df, columns=None, max_cols=4):
             row=row, col=col_pos
         )
         
-        # Add diagonal line
         fig.add_trace(
             go.Scatter(
                 x=qq_data[0][0],
@@ -373,7 +366,6 @@ def create_kde_plots(df, columns=None, max_cols=4):
     for col in numeric_cols:
         data = df[col].dropna()
         
-        # Create KDE using histogram
         fig.add_trace(go.Histogram(
             x=data,
             name=col,
@@ -392,6 +384,5 @@ def create_kde_plots(df, columns=None, max_cols=4):
     return fig
 
 
-# Import scipy.stats for qq plots
 from scipy import stats
 
