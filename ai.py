@@ -9,7 +9,6 @@ import pandas as pd
 from groq import Groq
 from dotenv import load_dotenv
 
-# Load environment variables from .env file if it exists
 load_dotenv()
 
 
@@ -64,15 +63,13 @@ def dataframe_to_summary(df):
             if df[col].nunique() <= 30:
                 summary += f"  - Values: {', '.join(map(str, df[col].unique().tolist()[:30]))}\n"
     
-    # Add aggregated data for better insights
     summary += "\n" + "="*50 + "\n"
     summary += "AGGREGATED DATA FOR ANALYSIS:\n"
     summary += "="*50 + "\n"
     
-    # For each categorical column, show aggregated numeric data
-    for cat_col in categorical_cols[:3]:  # Limit to first 3 categorical columns
-        if df[cat_col].nunique() <= 50:  # Only for columns with reasonable unique values
-            for num_col in numeric_cols[:3]:  # Limit to first 3 numeric columns
+    for cat_col in categorical_cols[:3]:  
+        if df[cat_col].nunique() <= 50:  
+            for num_col in numeric_cols[:3]:  
                 try:
                     agg_data = df.groupby(cat_col)[num_col].agg(['sum', 'mean', 'count']).round(2)
                     summary += f"\n{num_col} by {cat_col}:\n"
@@ -80,13 +77,11 @@ def dataframe_to_summary(df):
                 except:
                     pass
     
-    # Add sample rows
     summary += f"\n{'='*50}\n"
     summary += f"SAMPLE DATA (first 10 rows):\n"
     summary += f"{'='*50}\n"
     summary += df.head(10).to_string() + "\n"
     
-    # Add sample of last rows too
     if len(df) > 10:
         summary += f"\nLast 5 rows:\n"
         summary += df.tail(5).to_string() + "\n"
@@ -107,10 +102,8 @@ def generate_insights(dataframe):
     try:
         client = get_groq_client()
         
-        # Convert DataFrame to a summary string
         data_summary = dataframe_to_summary(dataframe)
         
-        # Create the prompt for the AI model
         prompt = f"""You are a data analyst. Analyze the following dataset and provide meaningful insights:
 
 {data_summary}
@@ -124,7 +117,6 @@ Please provide:
 
 Keep your response clear, concise, and actionable."""
         
-        # Call the Groq API
         chat_completion = client.chat.completions.create(
             messages=[
                 {
@@ -161,10 +153,8 @@ def chat_with_data(question, dataframe):
     try:
         client = get_groq_client()
         
-        # Convert DataFrame to a summary string
         data_summary = dataframe_to_summary(dataframe)
         
-        # Create the prompt for the AI model
         prompt = f"""You have access to the following dataset:
 
 {data_summary}
@@ -173,7 +163,6 @@ User Question: {question}
 
 Please answer the question based on the data provided. Be specific and reference actual values from the data when possible."""
         
-        # Call the Groq API
         chat_completion = client.chat.completions.create(
             messages=[
                 {

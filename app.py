@@ -11,14 +11,12 @@ import plotly.graph_objects as go
 from ai import generate_insights, chat_with_data
 
 
-# Page configuration
 st.set_page_config(
     page_title="AI Data Dashboard",
     page_icon="📊",
     layout="wide"
 )
 
-# Custom CSS for better styling
 st.markdown("""
     <style>
     .main-header {
@@ -54,11 +52,9 @@ st.markdown("""
 def main():
     """Main application function"""
     
-    # Header
     st.markdown('<div class="main-header">📊 AI-Powered Data Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Upload your CSV, visualize data, and get AI-powered insights</div>', unsafe_allow_html=True)
     
-    # Sidebar for file upload and settings
     with st.sidebar:
         st.header("📁 Data Upload")
         uploaded_file = st.file_uploader(
@@ -78,22 +74,16 @@ def main():
             "- Chat with your data"
         )
     
-    # Main content area
     if uploaded_file is not None:
         try:
-            # Load the CSV file
             df = pd.read_csv(uploaded_file)
             
-            # Store dataframe in session state
             st.session_state['df'] = df
             
-            # Display success message
             st.success(f"✅ File uploaded successfully! Loaded {len(df)} rows and {len(df.columns)} columns.")
             
-            # Create tabs for different sections
             tab1, tab2, tab3, tab4 = st.tabs(["📋 Data Preview", "📈 Visualizations", "🤖 AI Insights", "💬 Chat with Data"])
             
-            # Tab 1: Data Preview
             with tab1:
                 st.header("Data Preview")
                 
@@ -121,18 +111,15 @@ def main():
                 })
                 st.dataframe(col_info, use_container_width=True)
             
-            # Tab 2: Visualizations
             with tab2:
                 st.header("Data Visualizations")
                 
-                # Get numeric and categorical columns
                 numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
                 all_cols = df.columns.tolist()
                 
                 if not numeric_cols:
                     st.warning("⚠️ No numeric columns found for visualization.")
                 else:
-                    # Chart type selection
                     chart_type = st.selectbox(
                         "Select Chart Type",
                         ["Line Chart", "Bar Chart", "Scatter Plot", "Histogram", "Box Plot", "Pie Chart"]
@@ -210,14 +197,12 @@ def main():
                             values_col = st.selectbox("Select Values", numeric_cols, key="pie_values")
                         
                         if st.button("Generate Pie Chart", key="pie_btn"):
-                            # Aggregate data if needed
                             pie_data = df.groupby(names_col)[values_col].sum().reset_index()
                             fig = px.pie(pie_data, names=names_col, values=values_col, 
                                         title=f"{values_col} Distribution by {names_col}")
                             fig.update_layout(height=500)
                             st.plotly_chart(fig, use_container_width=True)
             
-            # Tab 3: AI Insights
             with tab3:
                 st.header("🤖 AI-Powered Insights")
                 st.write("Generate intelligent insights about your data using AI.")
@@ -227,29 +212,24 @@ def main():
                         insights = generate_insights(df)
                         st.session_state['insights'] = insights
                 
-                # Display insights if available
                 if 'insights' in st.session_state:
                     st.markdown("### 📊 Analysis Results")
                     st.markdown(f'<div class="insight-box">{st.session_state["insights"]}</div>', 
                                unsafe_allow_html=True)
             
-            # Tab 4: Chat with Data
             with tab4:
                 st.header("💬 Chat with Your Data")
                 st.write("Ask questions about your data and get AI-powered answers.")
                 
-                # Initialize chat history
                 if 'chat_history' not in st.session_state:
                     st.session_state['chat_history'] = []
                 
-                # Display chat history
                 for i, chat in enumerate(st.session_state['chat_history']):
                     with st.container():
                         st.markdown(f"**You:** {chat['question']}")
                         st.markdown(f"**AI:** {chat['answer']}")
                         st.markdown("---")
                 
-                # Chat input
                 with st.form(key='chat_form'):
                     user_question = st.text_input(
                         "Ask a question about your data:",
@@ -261,16 +241,13 @@ def main():
                         with st.spinner("🤖 Thinking..."):
                             answer = chat_with_data(user_question, df)
                             
-                            # Add to chat history
                             st.session_state['chat_history'].append({
                                 'question': user_question,
                                 'answer': answer
                             })
                             
-                            # Rerun to display new message
                             st.rerun()
                 
-                # Clear chat history button
                 if st.session_state['chat_history']:
                     if st.button("🗑️ Clear Chat History"):
                         st.session_state['chat_history'] = []
@@ -281,7 +258,6 @@ def main():
             st.info("Please make sure your CSV file is properly formatted.")
     
     else:
-        # Landing page when no file is uploaded
         st.info("👈 Please upload a CSV file from the sidebar to get started!")
         
         st.markdown("### 🚀 Getting Started")
