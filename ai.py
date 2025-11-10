@@ -7,6 +7,10 @@ for generating insights and chatting with data.
 import os
 import pandas as pd
 from groq import Groq
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 
 def get_groq_client():
@@ -102,7 +106,7 @@ Keep your response clear, concise, and actionable."""
                     "content": prompt
                 }
             ],
-            model="llama-3.1-70b-versatile",
+            model="llama-3.3-70b-versatile",
             temperature=0.7,
             max_tokens=1500
         )
@@ -151,7 +155,7 @@ Please answer the question based on the data provided. Be specific and reference
                     "content": prompt
                 }
             ],
-            model="llama-3.1-70b-versatile",
+            model="llama-3.3-70b-versatile",
             temperature=0.5,
             max_tokens=1000
         )

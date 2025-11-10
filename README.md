@@ -1,6 +1,6 @@
 # 📊 AI-Powered Data Visualization Dashboard
 
-An interactive web application built with Streamlit that allows users to upload CSV files, create beautiful visualizations, and get AI-powered insights using the Groq API with LLaMA 3.1 model.
+An interactive web application built with Streamlit that allows users to upload CSV files, create beautiful visualizations, and get AI-powered insights using the Groq API with LLaMA 3.3 model.
 
 ## 🌟 Features
 
@@ -13,7 +13,7 @@ An interactive web application built with Streamlit that allows users to upload 
   - Histograms
   - Box Plots
   - Pie Charts
-- **AI-Powered Insights**: Generate intelligent analysis of your data using Groq's LLaMA 3.1 model
+- **AI-Powered Insights**: Generate intelligent analysis of your data using Groq's LLaMA 3.3 model
 - **Chat with Your Data**: Ask questions about your dataset and get AI-powered answers
 - **Modern UI**: Clean, intuitive interface with responsive design
 
@@ -23,7 +23,7 @@ An interactive web application built with Streamlit that allows users to upload 
 - **Streamlit**: Web application framework
 - **Pandas**: Data manipulation and analysis
 - **Plotly**: Interactive visualization library
-- **Groq API**: AI reasoning with LLaMA 3.1-70b-versatile model
+- **Groq API**: AI reasoning with LLaMA 3.3-70b-versatile model
 
 ## 📋 Prerequisites
 
