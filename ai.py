@@ -1,0 +1,163 @@
+"""
+AI Module - Groq API Integration
+This module provides helper functions to interact with the Groq API
+for generating insights and chatting with data.
+"""
+
+import os
+import pandas as pd
+from groq import Groq
+
+
+def get_groq_client():
+    """
+    Initialize and return a Groq client instance.
+    
+    Returns:
+        Groq: Initialized Groq client
+    
+    Raises:
+        ValueError: If GROQ_API_KEY environment variable is not set
+    """
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY environment variable is not set")
+    return Groq(api_key=api_key)
+
+
+def dataframe_to_summary(df):
+    """
+    Convert a pandas DataFrame to a text summary for the AI model.
+    
+    Args:
+        df (pd.DataFrame): The DataFrame to summarize
+    
+    Returns:
+        str: A text summary of the DataFrame
+    """
+    summary = f"Dataset Overview:\n"
+    summary += f"- Number of rows: {len(df)}\n"
+    summary += f"- Number of columns: {len(df.columns)}\n"
+    summary += f"- Column names: {', '.join(df.columns.tolist())}\n\n"
+    
+    summary += "Column Statistics:\n"
+    for col in df.columns:
+        summary += f"\n{col}:\n"
+        if pd.api.types.is_numeric_dtype(df[col]):
+            summary += f"  - Type: Numeric\n"
+            summary += f"  - Min: {df[col].min()}\n"
+            summary += f"  - Max: {df[col].max()}\n"
+            summary += f"  - Mean: {df[col].mean():.2f}\n"
+            summary += f"  - Median: {df[col].median():.2f}\n"
+        else:
+            summary += f"  - Type: {df[col].dtype}\n"
+            summary += f"  - Unique values: {df[col].nunique()}\n"
+            if df[col].nunique() <= 10:
+                summary += f"  - Values: {', '.join(map(str, df[col].unique().tolist()))}\n"
+    
+    summary += f"\nFirst few rows:\n{df.head(3).to_string()}\n"
+    
+    return summary
+
+
+def generate_insights(dataframe):
+    """
+    Generate AI insights based on the uploaded DataFrame.
+    
+    Args:
+        dataframe (pd.DataFrame): The DataFrame to analyze
+    
+    Returns:
+        str: AI-generated insights about the data
+    """
+    try:
+        client = get_groq_client()
+        
+        # Convert DataFrame to a summary string
+        data_summary = dataframe_to_summary(dataframe)
+        
+        # Create the prompt for the AI model
+        prompt = f"""You are a data analyst. Analyze the following dataset and provide meaningful insights:
+
+{data_summary}
+
+Please provide:
+1. Key observations about the data
+2. Interesting patterns or trends you notice
+3. Potential correlations between variables
+4. Suggestions for further analysis
+5. Any data quality issues you notice
+
+Keep your response clear, concise, and actionable."""
+        
+        # Call the Groq API
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert data analyst who provides clear, actionable insights from data."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            model="llama-3.1-70b-versatile",
+            temperature=0.7,
+            max_tokens=1500
+        )
+        
+        return chat_completion.choices[0].message.content
+    
+    except Exception as e:
+        return f"Error generating insights: {str(e)}"
+
+
+def chat_with_data(question, dataframe):
+    """
+    Answer user questions about the data using the Groq API.
+    
+    Args:
+        question (str): The user's question about the data
+        dataframe (pd.DataFrame): The DataFrame to query
+    
+    Returns:
+        str: AI-generated answer to the question
+    """
+    try:
+        client = get_groq_client()
+        
+        # Convert DataFrame to a summary string
+        data_summary = dataframe_to_summary(dataframe)
+        
+        # Create the prompt for the AI model
+        prompt = f"""You have access to the following dataset:
+
+{data_summary}
+
+User Question: {question}
+
+Please answer the question based on the data provided. Be specific and reference actual values from the data when possible."""
+        
+        # Call the Groq API
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful data assistant. Answer questions about the provided dataset accurately and concisely."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            model="llama-3.1-70b-versatile",
+            temperature=0.5,
+            max_tokens=1000
+        )
+        
+        return chat_completion.choices[0].message.content
+    
+    except Exception as e:
+        return f"Error answering question: {str(e)}"
+
