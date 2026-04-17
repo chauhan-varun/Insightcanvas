@@ -1,31 +1,36 @@
-"""
-AI Module - Groq API Integration
-This module provides helper functions to interact with the Groq API
-for generating insights and chatting with data.
-"""
-
 import os
 import pandas as pd
-from groq import Groq
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# Configuration
+AI_MODEL = os.getenv("AI_MODEL", "meta-llama/llama-3.3-70b-instruct")
 
-def get_groq_client():
+
+def get_ai_client():
     """
-    Initialize and return a Groq client instance.
+    Initialize and return an OpenAI client configured for OpenRouter.
     
     Returns:
-        Groq: Initialized Groq client
+        OpenAI: Initialized client
     
     Raises:
-        ValueError: If GROQ_API_KEY environment variable is not set
+        ValueError: If OPENROUTER_API_KEY environment variable is not set
     """
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
-        raise ValueError("GROQ_API_KEY environment variable is not set")
-    return Groq(api_key=api_key)
+        raise ValueError("OPENROUTER_API_KEY environment variable is not set")
+    
+    return OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+        default_headers={
+            "HTTP-Referer": "https://github.com/chauhan-varun/Insightcanvas",
+            "X-Title": "Insightcanvas",
+        }
+    )
 
 
 def dataframe_to_summary(df):
@@ -100,7 +105,7 @@ def generate_insights(dataframe):
         str: AI-generated insights about the data
     """
     try:
-        client = get_groq_client()
+        client = get_ai_client()
         
         data_summary = dataframe_to_summary(dataframe)
         
@@ -128,7 +133,7 @@ Keep your response clear, concise, and actionable."""
                     "content": prompt
                 }
             ],
-            model="llama-3.3-70b-versatile",
+            model=AI_MODEL,
             temperature=0.7,
             max_tokens=1500
         )
@@ -141,7 +146,7 @@ Keep your response clear, concise, and actionable."""
 
 def chat_with_data(question, dataframe):
     """
-    Answer user questions about the data using the Groq API.
+    Answer user questions about the data using the OpenRouter API.
     
     Args:
         question (str): The user's question about the data
@@ -151,7 +156,7 @@ def chat_with_data(question, dataframe):
         str: AI-generated answer to the question
     """
     try:
-        client = get_groq_client()
+        client = get_ai_client()
         
         data_summary = dataframe_to_summary(dataframe)
         
@@ -174,7 +179,7 @@ Please answer the question based on the data provided. Be specific and reference
                     "content": prompt
                 }
             ],
-            model="llama-3.3-70b-versatile",
+            model=AI_MODEL,
             temperature=0.5,
             max_tokens=1000
         )

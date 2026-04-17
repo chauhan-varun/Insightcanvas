@@ -1,7 +1,7 @@
 """
 AI-Powered Data Visualization Dashboard
 Main Streamlit application for uploading CSV files, visualizing data, 
-and generating AI insights using the Groq API.
+and generating AI insights using the OpenRouter API.
 """
 
 import streamlit as st
@@ -121,20 +121,20 @@ def main():
                     st.metric("Memory Usage", f"{df.memory_usage(deep=True).sum() / 1024:.2f} KB")
                 
                 st.subheader("First 10 Rows")
-                st.dataframe(df.head(10), use_container_width=True)
+                st.dataframe(df.head(10), width="stretch")
                 
                 st.subheader("Data Summary")
-                st.dataframe(df.describe(), use_container_width=True)
+                st.dataframe(df.describe(), width="stretch")
                 
                 st.subheader("Column Information")
                 col_info = pd.DataFrame({
                     'Column': df.columns,
-                    'Data Type': df.dtypes.values,
+                    'Data Type': df.dtypes.astype(str).values,
                     'Non-Null Count': df.count().values,
                     'Null Count': df.isnull().sum().values,
                     'Unique Values': [df[col].nunique() for col in df.columns]
                 })
-                st.dataframe(col_info, use_container_width=True)
+                st.dataframe(col_info, width="stretch")
             
             with tab2:
                 st.header("📊 Data Quality Report")
@@ -212,7 +212,7 @@ def main():
                 column_details_display['missing_pct'] = column_details_display['missing_pct'].apply(lambda x: f"{x:.2f}%")
                 column_details_display['unique_pct'] = column_details_display['unique_pct'].apply(lambda x: f"{x:.2f}%")
                 
-                st.dataframe(column_details_display, use_container_width=True)
+                st.dataframe(column_details_display, width="stretch")
                 
                 st.markdown("---")
                 
@@ -316,7 +316,7 @@ def main():
                 
                 st.markdown("---")
                 
-                if st.button("🚀 Clean Data", type="primary", use_container_width=True):
+                if st.button("🚀 Clean Data", type="primary", width="stretch"):
                     with st.spinner("🧹 Cleaning data..."):
                         cleaning_options = {
                             'handle_missing': st.session_state.get('handle_missing', False),
@@ -401,7 +401,7 @@ def main():
                         st.write(f"✓ {log_entry}")
                     
                     st.subheader("👀 Cleaned Data Preview")
-                    st.dataframe(st.session_state['df_cleaned'].head(10), use_container_width=True)
+                    st.dataframe(st.session_state['df_cleaned'].head(10), width="stretch")
                     
                     if st.button("✅ Use Cleaned Data for Analysis", type="primary"):
                         st.session_state['df'] = st.session_state['df_cleaned']
@@ -433,7 +433,7 @@ def main():
                         if st.button("Generate Line Chart", key="line_btn"):
                             fig = px.line(df, x=x_col, y=y_col, title=f"{y_col} vs {x_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
                     
                     elif chart_type == "Bar Chart":
                         with col1:
@@ -444,7 +444,7 @@ def main():
                         if st.button("Generate Bar Chart", key="bar_btn"):
                             fig = px.bar(df, x=x_col, y=y_col, title=f"{y_col} by {x_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
                     
                     elif chart_type == "Scatter Plot":
                         with col1:
@@ -460,7 +460,7 @@ def main():
                             else:
                                 fig = px.scatter(df, x=x_col, y=y_col, color=color_col, title=f"{y_col} vs {x_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
                     
                     elif chart_type == "Histogram":
                         with col1:
@@ -471,7 +471,7 @@ def main():
                         if st.button("Generate Histogram", key="hist_btn"):
                             fig = px.histogram(df, x=x_col, nbins=bins, title=f"Distribution of {x_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
                     
                     elif chart_type == "Box Plot":
                         with col1:
@@ -485,7 +485,7 @@ def main():
                             else:
                                 fig = px.box(df, x=x_col, y=y_col, title=f"{y_col} by {x_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
                     
                     elif chart_type == "Pie Chart":
                         with col1:
@@ -498,7 +498,7 @@ def main():
                             fig = px.pie(pie_data, names=names_col, values=values_col, 
                                         title=f"{values_col} Distribution by {names_col}")
                             fig.update_layout(height=500)
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, width="stretch")
             
             with tab5:
                 st.header("🔬 Advanced Exploratory Data Analysis")
@@ -516,7 +516,7 @@ def main():
                         with st.spinner("Creating correlation heatmap..."):
                             fig_corr = create_correlation_heatmap(df)
                             if fig_corr:
-                                st.plotly_chart(fig_corr, use_container_width=True)
+                                st.plotly_chart(fig_corr, width="stretch")
                                 
                                 corr_matrix = df[numeric_cols].corr()
                                 
@@ -558,7 +558,7 @@ def main():
                         with st.spinner("Creating distribution plots..."):
                             fig_dist = create_distribution_plots(df, selected_dist_cols)
                             if fig_dist:
-                                st.plotly_chart(fig_dist, use_container_width=True)
+                                st.plotly_chart(fig_dist, width="stretch")
                     
                     st.markdown("---")
                     
@@ -576,7 +576,7 @@ def main():
                         with st.spinner("Creating box plots..."):
                             fig_box = create_box_plots_grid(df, selected_box_cols)
                             if fig_box:
-                                st.plotly_chart(fig_box, use_container_width=True)
+                                st.plotly_chart(fig_box, width="stretch")
                     
                     st.markdown("---")
                     
@@ -594,7 +594,7 @@ def main():
                         with st.spinner("Creating violin plots..."):
                             fig_violin = create_violin_plots(df, selected_violin_cols)
                             if fig_violin:
-                                st.plotly_chart(fig_violin, use_container_width=True)
+                                st.plotly_chart(fig_violin, width="stretch")
                     
                     st.markdown("---")
                     
@@ -614,7 +614,7 @@ def main():
                                 with st.spinner("Creating pairplot... (this may take a moment)"):
                                     img_base64 = create_pairplot_image(df, selected_pair_cols)
                                     if img_base64:
-                                        st.image(f"data:image/png;base64,{img_base64}", use_column_width=True)
+                                        st.image(f"data:image/png;base64,{img_base64}", width="stretch")
                                     else:
                                         st.error("Could not generate pairplot.")
                         else:
@@ -638,7 +638,7 @@ def main():
                                 with st.spinner("Creating scatter matrix..."):
                                     fig_scatter = create_scatter_matrix(df, selected_scatter_cols)
                                     if fig_scatter:
-                                        st.plotly_chart(fig_scatter, use_container_width=True)
+                                        st.plotly_chart(fig_scatter, width="stretch")
                         else:
                             st.info("Select at least 2 columns to create a scatter matrix.")
                     
@@ -658,13 +658,13 @@ def main():
                         with st.spinner("Creating KDE plots..."):
                             fig_kde = create_kde_plots(df, selected_kde_cols)
                             if fig_kde:
-                                st.plotly_chart(fig_kde, use_container_width=True)
+                                st.plotly_chart(fig_kde, width="stretch")
             
             with tab6:
                 st.header("🤖 AI-Powered Insights")
                 st.write("Generate intelligent insights about your data using AI.")
                 
-                if st.button("🔮 Generate AI Insights", key="insights_btn", use_container_width=True):
+                if st.button("🔮 Generate AI Insights", key="insights_btn", width="stretch"):
                     with st.spinner("🤖 Analyzing your data with AI..."):
                         insights = generate_insights(df)
                         st.session_state['insights'] = insights
