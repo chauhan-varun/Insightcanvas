@@ -4,6 +4,36 @@ An enterprise-grade, interactive data analysis platform that transforms raw CSV 
 
 ---
 
+## 🏗️ Technical Workflow
+
+```mermaid
+graph TD
+    subgraph "Data Ingestion"
+        A[Raw CSV Upload] --> B[Data Audit Engine]
+    end
+
+    subgraph "The Processing Core"
+        B --> C[Quality Scoring]
+        C --> D[Smart Auto-Cleaning]
+    end
+
+    subgraph "Analytics & Visualization"
+        D --> E[Interactive Dashboards]
+        D --> F[Advanced Statistical EDA]
+    end
+
+    subgraph "AI Storytelling (OpenRouter)"
+        E --> G[Automated Insights]
+        F --> G
+        G --> H[Interactive Data Chat]
+    end
+
+    style G fill:#f96,stroke:#333,stroke-width:2px
+    style B fill:#69f,stroke:#333,stroke-width:2px
+```
+
+---
+
 ## 🚀 Key Modules
 
 ### 1. 📋 Data Audit & Quality Reporting
